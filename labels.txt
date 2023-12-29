@@ -1,0 +1,2 @@
+0 gato
+1 perro

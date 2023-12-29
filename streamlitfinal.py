@@ -17,9 +17,6 @@ from skimage import io
 # Cargar el modelo de Keras
 model = load_model('keras_model.h5')
 
-# Cargar las etiquetas
-class_names = open("labels.txt", "r").readlines()
-
 # Crear el directorio temporal si no existe
 temp_dir = "temp"
 os.makedirs(temp_dir, exist_ok=True)
@@ -64,17 +61,9 @@ if uploaded_file is not None:
     pred = clasificar_imagen(temp_path)
 
     # Mostrar resultado de la clasificación
-    class_index = np.argmax(pred)
-    class_name = class_names[class_index].strip()
-
-    # Estilos personalizados
-    tipo_melanoma_style = f"font-size: 40px; color: {'red' if class_index == 1 else 'green'}"
-    probabilidad_style = "font-size: 40px;"
-    #0 gato
-    #1 perro
-    # Mostrar resultado de la clasificación con estilos personalizados
-    st.markdown(f'<p style="{tipo_melanoma_style}">Tipo de animal: {class_name[2:]}</p>', unsafe_allow_html=True)
-    st.markdown(f'<p style="{probabilidad_style}">Probabilidad: {pred:.5f}</p>', unsafe_allow_html=True)
-
+    if pred < 0.5:
+        st.markdown(f'<p style="color: green; font-size: 24px;">La imagen es un perro con una probabilidad de {round(1-pred, 4)}</p>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<p style="color: red; font-size: 24px;">La imagen es un gato con una probabilidad de {round(pred, 4)}</p>', unsafe_allow_html=True)
     # Eliminar el archivo temporal después de usarlo
     os.remove(temp_path)
